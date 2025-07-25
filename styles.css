@@ -49,6 +49,11 @@ html {
 	scroll-behavior: smooth;
 }
 
+/* Ensure sections account for fixed navbar */
+section {
+	scroll-margin-top: 70px;
+}
+
 body {
 	font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		sans-serif;
@@ -909,6 +914,11 @@ body {
 		left: 0;
 	}
 
+	.hero {
+		padding-top: 70px;
+		min-height: calc(100vh - 70px);
+	}
+
 	.hero-container {
 		grid-template-columns: 1fr;
 		text-align: center;
@@ -952,6 +962,11 @@ body {
 }
 
 @media (max-width: 480px) {
+	.hero {
+		padding-top: 70px;
+		min-height: calc(100vh - 70px);
+	}
+
 	.hero-title {
 		font-size: 2rem;
 	}
