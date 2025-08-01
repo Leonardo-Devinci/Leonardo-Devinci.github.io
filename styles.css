@@ -81,6 +81,13 @@ body {
 	transition: all 0.3s ease;
 }
 
+.navbar *:focus,
+.navbar *:active,
+.navbar *:focus-visible {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
 [data-theme="dark"] .navbar {
 	background: rgba(26, 32, 44, 0.95);
 }
@@ -117,6 +124,15 @@ body {
 	font-weight: 500;
 	position: relative;
 	transition: all 0.3s ease;
+	outline: none !important;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.nav-link:focus,
+.nav-link:active,
+.nav-link:focus-visible {
+	outline: none !important;
+	box-shadow: none !important;
 }
 
 .nav-link:hover {

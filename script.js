@@ -1,3 +1,16 @@
+// Performance optimization: Throttle scroll events
+function throttle(func, wait) {
+	let timeout;
+	return function executedFunction(...args) {
+		const later = () => {
+			clearTimeout(timeout);
+			func(...args);
+		};
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	};
+}
+
 // DOM Content Loaded
 document.addEventListener("DOMContentLoaded", function () {
 	// Initialize all functionality
@@ -126,17 +139,36 @@ function initNavigation() {
 // Enhanced scroll animations
 function initScrollAnimations() {
 	const observerOptions = {
-		threshold: 0.15,
-		rootMargin: "0px 0px -100px 0px",
+		threshold: 0.1,
+		rootMargin: "0px 0px -50px 0px",
 	};
 
 	const observer = new IntersectionObserver(function (entries) {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
 				entry.target.classList.add("visible");
+				console.log("Animation triggered for:", entry.target.className);
 			}
 		});
 	}, observerOptions);
+
+	// Fallback scroll-based animation trigger
+	function checkScrollAnimations() {
+		const elements = document.querySelectorAll(
+			".fade-in-up, .slide-in-left, .slide-in-right, .scale-in, .fade-in-down"
+		);
+		elements.forEach((element) => {
+			const elementTop = element.getBoundingClientRect().top;
+			const elementVisible = 150;
+
+			if (elementTop < window.innerHeight - elementVisible) {
+				element.classList.add("visible");
+			}
+		});
+	}
+
+	// Add scroll listener for fallback
+	window.addEventListener("scroll", throttle(checkScrollAnimations, 100));
 
 	// Section titles with fade-in-down animation
 	const sectionTitles = document.querySelectorAll(".section-title");
@@ -169,8 +201,13 @@ function initScrollAnimations() {
 	// Skill items with staggered fade-in-up animation
 	const skillItems = document.querySelectorAll(".skill-item");
 	skillItems.forEach((item, index) => {
-		item.classList.add("fade-in-up");
-		item.classList.add(`stagger-${Math.min(index + 1, 6)}`);
+		// Only add classes if they don't already exist
+		if (!item.classList.contains("fade-in-up")) {
+			item.classList.add("fade-in-up");
+		}
+		if (!item.classList.contains(`stagger-${Math.min(index + 1, 6)}`)) {
+			item.classList.add(`stagger-${Math.min(index + 1, 6)}`);
+		}
 		observer.observe(item);
 	});
 
@@ -185,8 +222,13 @@ function initScrollAnimations() {
 	// Contact methods with slide-in-left animation
 	const contactMethods = document.querySelectorAll(".contact-method");
 	contactMethods.forEach((method, index) => {
-		method.classList.add("slide-in-left");
-		method.classList.add(`stagger-${Math.min(index + 1, 6)}`);
+		// Only add classes if they don't already exist
+		if (!method.classList.contains("slide-in-left")) {
+			method.classList.add("slide-in-left");
+		}
+		if (!method.classList.contains(`stagger-${Math.min(index + 1, 6)}`)) {
+			method.classList.add(`stagger-${Math.min(index + 1, 6)}`);
+		}
 		observer.observe(method);
 	});
 
@@ -513,19 +555,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Performance optimization: Throttle scroll events
-function throttle(func, wait) {
-	let timeout;
-	return function executedFunction(...args) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
-}
 
 // Apply throttling to scroll events
 const throttledScrollHandler = throttle(function () {
