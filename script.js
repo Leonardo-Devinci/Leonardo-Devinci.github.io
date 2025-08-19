@@ -355,18 +355,34 @@ function initContactForm() {
 		submitBtn.innerHTML = '<span class="loading"></span> Sending...';
 		submitBtn.disabled = true;
 
-		// Simulate form submission (replace with actual form handling)
-		setTimeout(() => {
-			// Show success message
-			showNotification("Message sent successfully!", "success");
+		// Real form submission using Fetch API to Formspree
+		const formData = new FormData(contactForm);
+		const formspreeEndpoint = 'https://formspree.io/f/meozbqay';
 
-			// Reset form
-			contactForm.reset();
-
-			// Reset button
-			submitBtn.textContent = originalText;
+		fetch(formspreeEndpoint, {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'Accept': 'application/json'
+			}
+		}).then(response => {
+			if (response.ok) {
+				showNotification("Message sent successfully!", "success");
+				contactForm.reset();
+			} else {
+				response.json().then(data => {
+					const errorMessage = data.errors?.map(e => e.message).join(', ') || 'There was a problem.';
+					showNotification(`Oops! ${errorMessage}`, "error");
+				}).catch(() => {
+					showNotification("Oops! There was a problem submitting your form.", "error");
+				});
+			}
+		}).catch(() => {
+			showNotification("Oops! There was a problem submitting your form.", "error");
+		}).finally(() => {
+			submitBtn.innerHTML = originalText;
 			submitBtn.disabled = false;
-		}, 2000);
+		});
 	});
 
 	// Form validation
